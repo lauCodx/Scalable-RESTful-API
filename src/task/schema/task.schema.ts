@@ -1,9 +1,9 @@
-import { Prop, Schema } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Document, Schema as MongooseSchema } from "mongoose";
 
 @Schema({timestamps:true})
 export class Task extends Document {
-    @Prop({required: true, trim:true})
+    @Prop({required: true, trim:true, lowercase:true})
     title: string;
 
     @Prop({ required: true })
@@ -22,13 +22,14 @@ export class Task extends Document {
     @Prop({ enum: ['low', 'medium', 'high'] })
     priority?: 'low' | 'medium' | 'high';
 
-    @Prop({type: MongooseSchema.Types.ObjectId, required:true, ref:'User'  })
-    createdBy:MongooseSchema.Types.ObjectId;
+    @Prop({type: MongooseSchema.Types.ObjectId, required:false, ref:'User'  })
+    createdBy?:MongooseSchema.Types.ObjectId;
 
     @Prop({ match: /.+\@.+\..+/, message: "Must be an email"}) 
     assignedTo?: string; 
   
     @Prop({ type: [String], default: [] })
     tags?: string[];
-  
 }
+
+export const TaskSchema = SchemaFactory.createForClass(Task)

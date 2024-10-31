@@ -1,26 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Task } from './schema/task.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class TaskService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
-  }
+  constructor(@InjectModel(Task.name) private TaskModel: Model<Task>){}
 
-  findAll() {
-    return `This action returns all task`;
-  }
+  async createTask (createTaskDto: CreateTaskDto){
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
-  }
+    const {title} = createTaskDto
+    const find = await this.TaskModel.findOne({title:title.toLowerCase()})
+    if(find){
+      throw new BadRequestException('This task is already created')
+    };
+    const task = await this.TaskModel.create(createTaskDto)
+    return task;
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} task`;
   }
 }
