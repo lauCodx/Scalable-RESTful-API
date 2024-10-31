@@ -57,4 +57,12 @@ export class TaskService {
     return updateTask
   }
 
+  async deleteTasks (id:string){
+
+    const deleteTask = await this.taskModel.findByIdAndDelete({_id:id})
+    if(!deleteTask){
+      throw new NotFoundException("Task not found")
+    }
+  }
+
 }
