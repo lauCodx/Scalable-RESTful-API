@@ -1,14 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { SignUpDto } from './dto/signUpDto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt'
+import { JwtService } from '@nestjs/jwt';
+import { SignInDto } from './dto/signInDto';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private UserModel: Model<User>) {}
+  constructor(@InjectModel(User.name) private UserModel: Model<User>, private jwtService: JwtService) {}
 
   async createUser (signUpDto:SignUpDto){
 
@@ -30,5 +32,26 @@ export class AuthService {
     })
 
     return user;
+  };
+
+  async signInUser(signInDto:SignInDto){
+    const {email, password} = signInDto;
+    const find = await this.UserModel.findOne({email: email});
+    if(!find){
+      throw new NotFoundException('User with this email is not found!')
+    };
+
+    const passwordMatch = await bcrypt.compare(password, find.password);
+    if(!passwordMatch){
+      throw new BadRequestException('Email or Password not correct')
+    };
+
+    const accessToken = this.jwtService.sign({_id:find._id, email: find.email}, {expiresIn:'1h'});
+
+    return {accessToken:accessToken};
   }
+
+
+
+
 }
