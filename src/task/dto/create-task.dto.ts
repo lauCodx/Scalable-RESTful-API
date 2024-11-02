@@ -27,10 +27,6 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsString()
-  createdBy?: string;
-
-  @IsOptional()
-  @IsString()
   assignedTo?: string;
 
   @IsOptional()
