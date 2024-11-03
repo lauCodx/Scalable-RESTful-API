@@ -10,14 +10,17 @@ import { PaginationDto } from './dto/paginationDto';
 export class TaskService {
   constructor(@InjectModel(Task.name) private taskModel: Model<Task>){}
 
-  async createTask (createTaskDto: CreateTaskDto){
+  async createTask (createTaskDto: Partial <CreateTaskDto> & {createdBy: string}){
 
-    const {title} = createTaskDto
+    const {title, createdBy} = createTaskDto
     const find = await this.taskModel.findOne({title:title.toLowerCase()})
     if(find){
       throw new BadRequestException('This task is already created')
     };
-    const task = await this.taskModel.create(createTaskDto)
+  const task = await this.taskModel.create({
+    ...createTaskDto,
+    createdBy
+  })
     return task;
 
   }
