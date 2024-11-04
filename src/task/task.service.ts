@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -25,12 +25,17 @@ export class TaskService {
 
   }
 
-  async getAllTask (paginationDto: PaginationDto){
+  async getAllTask (paginationDto: PaginationDto, userId:string){
+   
+    const user = await this.taskModel.find({userId: userId})
+    if(!user){
+      throw new UnauthorizedException('Not a valid user ID')
+    }
     const {page =1, limit =10} = paginationDto;
     const skip = (page -1) * limit;
 
     const task = await this.taskModel
-    .find()
+    .find({createdBy:userId})
     .skip(skip)
     .limit(limit)
 
