@@ -21,9 +21,9 @@ export class TaskController {
   }
 
   @Get()
-  async fetchTask (@Query() paginationDto: PaginationDto){
-    
-    return this.taskService.getAllTask(paginationDto)
+  async fetchTask (@Query() paginationDto: PaginationDto, @Req() req:AuthUser){
+    const userId = req.user._id
+    return this.taskService.getAllTask(paginationDto, userId)
   }
 
   @Get(':id')
