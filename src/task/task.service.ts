@@ -54,8 +54,12 @@ export class TaskService {
     return find;
   }
 
-  async updateTasks (id:string, updateTaskDto: UpdateTaskDto){
-    
+  async updateTasks (id:string, updateTaskDto: UpdateTaskDto, userId: string){
+
+    const find = await this.taskModel.findById({_id:id})
+    if(!(find.createdBy.toString()=== userId)){
+      throw new UnauthorizedException('You do not have access to update this task')
+    }
     const updateTask = await this.taskModel.findByIdAndUpdate(id, 
     {$set: updateTaskDto}, {new:true})
 
@@ -65,8 +69,12 @@ export class TaskService {
     return updateTask
   }
 
-  async deleteTasks (id:string){
+  async deleteTasks (id:string, userId:string){
 
+    const find = await this.taskModel.findById({_id:id})
+    if(!(find.createdBy.toString()=== userId)){
+      throw new UnauthorizedException('You do not have access to delete this task')
+    }
     const deleteTask = await this.taskModel.findByIdAndDelete({_id:id})
     if(!deleteTask){
       throw new NotFoundException("Task not found")
