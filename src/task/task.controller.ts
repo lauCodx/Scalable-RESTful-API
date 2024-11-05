@@ -27,18 +27,21 @@ export class TaskController {
   }
 
   @Get(':id')
-  async getTaskById (@Param('id') id: string){
-    return this.taskService.getTasksById(id)
+  async getTaskById (@Param('id') id: string, @Req() req: AuthUser){
+    const userId = req.user._id
+    return this.taskService.getTasksById(id, userId)
   }
 
   @Patch(':id')
-  async updateTask (@Param('id') id:string, @Body() updateTaskDto: UpdateTaskDto){
-    return this.taskService.updateTasks(id, updateTaskDto)
+  async updateTask (@Param('id') id:string, @Body() updateTaskDto: UpdateTaskDto, @Req() req:AuthUser){
+    const userId = req.user._id
+    return this.taskService.updateTasks(id, updateTaskDto, userId)
   }
 
   @Delete(':id')
-  async deleteATask (@Param('id') id: string){
-    return this.taskService.deleteTasks(id)
+  async deleteATask (@Param('id') id: string, @Req() req:AuthUser){
+    const userId = req.user._id
+    return this.taskService.deleteTasks(id, userId)
   }
  
 }
