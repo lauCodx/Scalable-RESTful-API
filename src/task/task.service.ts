@@ -46,7 +46,11 @@ export class TaskService {
     }
   }
 
-  async getTasksById (id: string){
+  async getTasksById (id: string, userId: string){
+    const checkId = await this.taskModel.findOne({userId: userId})
+    if(!checkId){
+      throw new UnauthorizedException('Not permitted!')
+    }
     const find = await this.taskModel.findById({_id:id})
     if(!find){
       throw new NotFoundException("Task not found")

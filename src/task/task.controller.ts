@@ -27,8 +27,9 @@ export class TaskController {
   }
 
   @Get(':id')
-  async getTaskById (@Param('id') id: string){
-    return this.taskService.getTasksById(id)
+  async getTaskById (@Param('id') id: string, @Req() req: AuthUser){
+    const userId = req.user._id
+    return this.taskService.getTasksById(id, userId)
   }
 
   @Patch(':id')
