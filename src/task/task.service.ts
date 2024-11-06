@@ -13,7 +13,7 @@ export class TaskService {
   async createTask (createTaskDto: Partial <CreateTaskDto> & {createdBy: string}){
 
     const {title, createdBy} = createTaskDto
-    const find = await this.taskModel.findOne({title:title.toLowerCase()})
+    const find = await this.taskModel.findOne({title:title})
     if(find){
       throw new BadRequestException('This task is already created')
     };
