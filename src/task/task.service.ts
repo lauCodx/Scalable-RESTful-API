@@ -26,7 +26,7 @@ export class TaskService {
 
   async getAllTask (paginationDto: PaginationDto, userId:string){
    
-    const user = await this.taskModel.find({userId: userId})
+    const user = await this.taskModel.findOne({createdBy: userId})
     if(!user){
       throw new UnauthorizedException('Not a valid user ID')
     }
@@ -38,15 +38,34 @@ export class TaskService {
     .skip(skip)
     .limit(limit)
 
-    const total = await this.taskModel.countDocuments({userId: userId})
+    const total = await this.taskModel.countDocuments({createdBy: userId})
     return {
       task,
       total
     }
   }
 
+  async getTasksByFilter (filter: {status: string, priority:string, tags:string[]}, userId: string){
+    const user = await this.taskModel.findOne({createdBy: userId})
+    if(!user){
+      throw new UnauthorizedException ('Not permitted to access this route')
+    }
+    const {tags, ...filterObjects} = filter
+    const query = {
+      ...filterObjects,
+      ...(tags? {tags: {$in: tags}} : {})
+    }
+    const filteredQuery = await this.taskModel.find(query)
+    const countFilteredDocs = await this.taskModel.countDocuments(query)
+
+    return {
+      countFilteredDocs,
+      filteredQuery
+    }
+  }
+
   async getTasksById (id: string, userId: string){
-    const checkId = await this.taskModel.findOne({userId: userId})
+    const checkId = await this.taskModel.findOne({createdBy: userId})
     if(!checkId){
       throw new UnauthorizedException('Not permitted!')
     }

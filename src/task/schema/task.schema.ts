@@ -22,7 +22,7 @@ export class Task extends Document {
     @Prop({ enum: ['low', 'medium', 'high'] })
     priority?: 'low' | 'medium' | 'high';
 
-    @Prop({type: MongooseSchema.Types.ObjectId, required:true, ref:'User'  })
+    @Prop({type: MongooseSchema.Types.ObjectId, required:true, ref:'User'})
     createdBy?:MongooseSchema.Types.ObjectId;
 
     @Prop({ match: /.+\@.+\..+/, message: "Must be an email"}) 
