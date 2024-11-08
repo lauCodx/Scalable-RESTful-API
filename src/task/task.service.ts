@@ -13,7 +13,7 @@ export class TaskService {
   async createTask (createTaskDto: Partial <CreateTaskDto> & {createdBy: string}){
 
     const {title, createdBy} = createTaskDto
-    const find = await this.taskModel.findOne({title:title})
+    const find = await this.taskModel.findOne({title:title, createdBy: createdBy})
     if(find){
       throw new BadRequestException('This task is already created')
     };
@@ -22,7 +22,6 @@ export class TaskService {
     createdBy
   })
     return task;
-
   }
 
   async getAllTask (paginationDto: PaginationDto, userId:string){
@@ -39,7 +38,7 @@ export class TaskService {
     .skip(skip)
     .limit(limit)
 
-    const total = await this.taskModel.countDocuments()
+    const total = await this.taskModel.countDocuments({userId: userId})
     return {
       task,
       total
