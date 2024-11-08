@@ -46,7 +46,7 @@ export class AuthService {
       throw new BadRequestException('Email or Password not correct')
     };
 
-    const accessToken = this.jwtService.sign({_id:find._id, email: find.email}, {expiresIn:'1h'});
+    const accessToken = this.jwtService.sign({_id:find._id}, {expiresIn:'1h'});
 
     return {accessToken:accessToken};
   }

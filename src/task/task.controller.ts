@@ -21,11 +21,19 @@ export class TaskController {
   }
 
   @Get()
-  async fetchTask (@Query() paginationDto: PaginationDto, @Req() req:AuthUser){
+  async getFilteredTasks (@Query() query:{status: string; priority: string; tags: string[]; page:number; limit: number}, @Req() req: AuthUser){
     const userId = req.user._id
+
+    if (query.status || query.priority || query.tags){
+      return this.taskService.getTasksByFilter(query, userId)
+    }
+
+    const paginationDto:PaginationDto = {page: query.page, limit:query.limit};
     return this.taskService.getAllTask(paginationDto, userId)
+   
   }
 
+ 
   @Get(':id')
   async getTaskById (@Param('id') id: string, @Req() req: AuthUser){
     const userId = req.user._id
