@@ -57,6 +57,9 @@ export class TaskService {
     }
     const filteredQuery = await this.taskModel.find(query)
     const countFilteredDocs = await this.taskModel.countDocuments(query)
+    if(countFilteredDocs === 0){
+      return 'No Task found'
+    }
 
     return {
       countFilteredDocs,
