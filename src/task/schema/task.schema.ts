@@ -30,6 +30,9 @@ export class Task extends Document {
   
     @Prop({ type: [String], default: [] })
     tags?: string[];
+
+    @Prop({type:[String], default:[]})
+    shareTaskWith?:string[]
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task)
