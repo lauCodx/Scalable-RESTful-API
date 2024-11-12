@@ -1,6 +1,6 @@
 import { ArrayNotEmpty, IsArray, IsEmail, IsString } from "class-validator";
 
-export class shareTaskDto {
+export class ShareTaskDto {
     @IsString()
     taskId: string;
 
