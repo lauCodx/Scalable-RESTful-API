@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Task } from './schema/task.schema';
 import { Model } from 'mongoose';
 import { PaginationDto } from './dto/paginationDto';
+import { ShareTaskDto } from './dto/share-task.dto';
 
 @Injectable()
 export class TaskService {
@@ -77,6 +78,19 @@ export class TaskService {
       throw new NotFoundException("Task not found")
     }
     return find;
+  }
+
+  async sharedTask (shareTaskDto:ShareTaskDto, userId: string){
+    const {taskId, recipientEmails} = shareTaskDto
+    const task = await this.taskModel.findOne({_id: taskId, createdBy: userId})
+    if(!task){
+      throw new UnauthorizedException('Task not found or you are not permitted! to share this task')
+    }
+    task.shareTaskWith = task.shareTaskWith ? [...new Set([...task.shareTaskWith, ...recipientEmails])] : recipientEmails;
+    await task.save();
+
+    return {message: 'Task was shared successfully', sharedWith:task.shareTaskWith}
+
   }
 
   async updateTasks (id:string, updateTaskDto: UpdateTaskDto, userId: string){
