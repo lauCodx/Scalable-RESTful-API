@@ -86,7 +86,20 @@ export class TaskService {
     if(!task){
       throw new UnauthorizedException('Task not found or you are not permitted! to share this task')
     }
-    task.shareTaskWith = task.shareTaskWith ? [...new Set([...task.shareTaskWith, ...recipientEmails])] : recipientEmails;
+
+    const alreadySharedEmail = recipientEmails.filter(email => task.shareTaskWith.includes(email));
+    if (alreadySharedEmail.length > 0){
+      throw new BadRequestException(`This task has already been shared to these email(s):${alreadySharedEmail.join(', ')}` )
+    }
+
+    const newEmail = recipientEmails.filter(email => !task.shareTaskWith.includes(email));
+
+    if(newEmail.length === 0){
+      throw new BadRequestException('No new email to share, all provided emails have been asigned a task already')
+    }
+
+    task.shareTaskWith = task.shareTaskWith ? [...task.shareTaskWith, ...newEmail]: newEmail;
+    
     await task.save();
 
     return {message: 'Task was shared successfully', sharedWith:task.shareTaskWith}
