@@ -36,4 +36,13 @@ export class Task extends Document {
     shareTaskWith?:string[]
 }
 
+
+
 export const TaskSchema = SchemaFactory.createForClass(Task)
+
+TaskSchema.index({createdBy:1})
+TaskSchema.index({status:1})
+TaskSchema.index({priority:1})
+TaskSchema.index({dueDate:1})
+TaskSchema.index({title:1})
+TaskSchema.index({tags:1})
