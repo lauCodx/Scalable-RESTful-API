@@ -12,7 +12,7 @@ import { SignInDto } from './dto/signInDto';
 export class AuthService {
   constructor(@InjectModel(User.name) private UserModel: Model<User>, private jwtService: JwtService) {}
 
-  async createUser (signUpDto:SignUpDto){
+  async createUser (signUpDto:SignUpDto): Promise<User>{
 
     const {email, password, confirmPassword, username} = signUpDto;
 
@@ -34,7 +34,7 @@ export class AuthService {
     return user;
   };
 
-  async signInUser(signInDto:SignInDto){
+  async signInUser(signInDto:SignInDto): Promise<any>{
     const {email, password} = signInDto;
     const find = await this.UserModel.findOne({email: email});
     if(!find){

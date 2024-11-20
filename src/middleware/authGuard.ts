@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate{
     private extractTokenFromHeader(req:Request): string | undefined{
         const authHeader = req.headers.authorization
         if(!authHeader){
-            Logger.error('Authorization header missing')
+            Logger.error('Authorization header is missing')
             throw new UnauthorizedException('No Authorization found')
         }
         return authHeader.split(' ')[1];

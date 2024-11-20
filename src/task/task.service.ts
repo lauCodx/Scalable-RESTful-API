@@ -11,7 +11,7 @@ import { ShareTaskDto } from './dto/share-task.dto';
 export class TaskService {
   constructor(@InjectModel(Task.name) private taskModel: Model<Task>){}
 
-  async createTask (createTaskDto: Partial <CreateTaskDto> & {createdBy: string}){
+  async createTask (createTaskDto: Partial <CreateTaskDto> & {createdBy: string}): Promise<Task>{
 
     const {title, createdBy} = createTaskDto
     const find = await this.taskModel.findOne({title:title, createdBy: createdBy})
@@ -25,7 +25,7 @@ export class TaskService {
     return task;
   }
 
-  async getAllTask (paginationDto: PaginationDto, userId:string){
+  async getAllTask (paginationDto: PaginationDto, userId:string): Promise<Task | any>{
    
     const user = await this.taskModel.findOne({createdBy: userId})
     if(!user){
@@ -46,7 +46,7 @@ export class TaskService {
     }
   }
 
-  async getTasksByFilter (filter: {status: string, priority:string, tags:string[]}, userId: string){
+  async getTasksByFilter (filter: {status: string, priority:string, tags:string[]}, userId: string): Promise<Task | any>{
     const user = await this.taskModel.findOne({createdBy: userId})
     if(!user){
       throw new UnauthorizedException ('Not permitted to access this route')
@@ -68,7 +68,7 @@ export class TaskService {
     }
   }
 
-  async getTasksById (id: string, userId: string){
+  async getTasksById (id: string, userId: string): Promise<Task>{
     const checkId = await this.taskModel.findOne({createdBy: userId})
     if(!checkId){
       throw new UnauthorizedException('Not permitted!')
@@ -80,7 +80,7 @@ export class TaskService {
     return find;
   }
 
-  async sharedTask (shareTaskDto:ShareTaskDto, userId: string){
+  async sharedTask (shareTaskDto:ShareTaskDto, userId: string): Promise<any>{
     const {taskId, recipientEmails} = shareTaskDto
     const task = await this.taskModel.findOne({_id: taskId, createdBy: userId})
     if(!task){
@@ -106,7 +106,7 @@ export class TaskService {
 
   }
 
-  async updateTasks (id:string, updateTaskDto: UpdateTaskDto, userId: string){
+  async updateTasks (id:string, updateTaskDto: UpdateTaskDto, userId: string): Promise<Task>{
 
     const find = await this.taskModel.findById({_id:id})
     if(!(find.createdBy.toString()=== userId)){
@@ -121,7 +121,7 @@ export class TaskService {
     return updateTask
   }
 
-  async deleteTasks (id:string, userId:string){
+  async deleteTasks (id:string, userId:string): Promise<string>{
 
     const find = await this.taskModel.findById({_id:id})
     if(!(find.createdBy.toString()=== userId)){
@@ -131,6 +131,7 @@ export class TaskService {
     if(!deleteTask){
       throw new NotFoundException("Task not found")
     }
+    return 'Task deleted successfully!'
   }
 
 }
