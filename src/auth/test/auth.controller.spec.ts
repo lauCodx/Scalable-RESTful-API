@@ -31,7 +31,7 @@ describe('AuthController', () => {
   });
 
   describe('{POST} /users/register', () =>{
-    test('should sign up a user and return a success response 201', async()=>{
+    describe('should sign up a user and return a success response', ()=>{
       const signUpDto: SignUpDto = {
         username: 'example',
         email:'example@gmail.com',
@@ -40,21 +40,34 @@ describe('AuthController', () => {
       };
 
       const mockUser = userStub();
-      (authService.createUser as jest.Mock).mockResolvedValue(mockUser)
+      beforeAll(() =>{
+        (authService.createUser as jest.Mock).mockResolvedValue(mockUser)
+      })
 
       const response = {
         status:jest.fn().mockReturnThis(),
         json:jest.fn().mockReturnThis()
       } as unknown as Response;
+      
+    
 
-      await authController.signUp(signUpDto, response);
+      test('it should create user successfully', async()=>{
+        await authController.signUp(signUpDto, response);
+        expect(authService.createUser).toHaveBeenCalledWith(signUpDto);
+      })
 
-      expect(authService.createUser).toHaveBeenCalledWith(signUpDto);
-      expect(response.status).toHaveBeenCalledWith(201);
-      expect(response.json).toHaveBeenCalledWith({
-        status:'success',
-        message:'Created User successfully',
-        user: mockUser
+      test('it should return a status code of 201', async ()=>{
+        await authController.signUp(signUpDto, response);
+        expect(response.status).toHaveBeenCalledWith(201);
+      })
+
+      test('it should return a json value', async ()=>{
+        await authController.signUp(signUpDto, response); 
+        expect(response.json).toHaveBeenCalledWith({
+          status:'success',
+          message:'Created User successfully',
+          user: mockUser
+        })
       })
     })
   })
