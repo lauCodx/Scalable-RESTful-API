@@ -1,6 +1,6 @@
 import { Request } from "express";
 
-interface UserInterface{
+export interface UserInterface{
     _id: string;
     email: string;
     username: string;
@@ -8,4 +8,17 @@ interface UserInterface{
 
 export interface AuthUser extends Request{
     user?: UserInterface;
+}
+
+export interface UserInterfacesSignUp{
+    email: string;
+    username: string;
+    password:string;
+    confirmPassword: string;
+}
+
+export interface UserInterfacesSignIn{
+    email: string;
+    password: string;
+   
 }

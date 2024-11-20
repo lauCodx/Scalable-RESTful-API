@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MinLength, ValidateIf } from "class-validator";
+import { UserInterfacesSignUp } from "../interface/user.interface";
 
-export class SignUpDto {
+export class SignUpDto implements UserInterfacesSignUp {
 
     @IsString()
     @IsOptional()

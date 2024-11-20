@@ -6,6 +6,7 @@ import { PaginationDto } from './dto/paginationDto';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { AuthUser } from 'src/auth/interface/user.interface';
 import { ShareTaskDto } from './dto/share-task.dto';
+import { Task } from './schema/task.schema';
 
 @UseGuards(AuthGuard)
 @Controller('tasks')
@@ -13,7 +14,7 @@ export class TaskController {
   constructor(private taskService:TaskService){}
 
   @Post()
-  async createATask (@Body() createTaskDto: CreateTaskDto, @Req() req:AuthUser){
+  async createATask (@Body() createTaskDto: CreateTaskDto, @Req() req:AuthUser): Promise<Task>{
     const userId = req.user._id
     return this.taskService.createTask({
       ...createTaskDto,
@@ -22,7 +23,7 @@ export class TaskController {
   }
 
   @Get()
-  async getFilteredTasks (@Query() query:{status: string; priority: string; tags: string[]; page:number; limit: number}, @Req() req: AuthUser){
+  async getFilteredTasks (@Query() query:{status: string; priority: string; tags: string[]; page:number; limit: number}, @Req() req: AuthUser): Promise<Task[]>{
     const userId = req.user._id
 
     if (query.status || query.priority || query.tags){
