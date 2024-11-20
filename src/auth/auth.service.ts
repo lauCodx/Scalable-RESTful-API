@@ -31,7 +31,10 @@ export class AuthService {
       password:hashPassword
     })
 
-    return user;
+    const userObj = user.toObject()
+    delete userObj.password
+
+    return userObj;
   };
 
   async signInUser(signInDto:SignInDto): Promise<any>{

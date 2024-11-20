@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -38,6 +37,6 @@ import { TaskModule } from './task/task.module';
     TaskModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}
