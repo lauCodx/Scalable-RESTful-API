@@ -25,7 +25,7 @@ export class TaskService {
     return task;
   }
 
-  async getAllTask (paginationDto: PaginationDto, userId:string): Promise<Task | any>{
+  async getAllTask (paginationDto: PaginationDto, userId:string): Promise<any>{
    
     const user = await this.taskModel.findOne({createdBy: userId})
     if(!user){
@@ -46,7 +46,7 @@ export class TaskService {
     }
   }
 
-  async getTasksByFilter (filter: {status: string, priority:string, tags:string[]}, userId: string): Promise<Task | any>{
+  async getTasksByFilter (filter: {status: string, priority:string, tags:string[]}, userId: string): Promise<any>{
     const user = await this.taskModel.findOne({createdBy: userId})
     if(!user){
       throw new UnauthorizedException ('Not permitted to access this route')
@@ -83,8 +83,8 @@ export class TaskService {
   async sharedTask (shareTaskDto:ShareTaskDto, userId: string): Promise<any>{
     const {taskId, recipientEmails} = shareTaskDto
     const task = await this.taskModel.findOne({_id: taskId, createdBy: userId})
-    if(!task){
-      throw new UnauthorizedException('Task not found or you are not permitted! to share this task')
+    if(!(task.createdBy.toString() === userId)){
+      throw new UnauthorizedException('Task not found or you are not permitted to share this task')
     }
 
     const alreadySharedEmail = recipientEmails.filter(email => task.shareTaskWith.includes(email));

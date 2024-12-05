@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req, Res } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -7,6 +7,7 @@ import { AuthGuard } from 'src/middleware/authGuard';
 import { AuthUser } from 'src/auth/interface/user.interface';
 import { ShareTaskDto } from './dto/share-task.dto';
 import { Task } from './schema/task.schema';
+import { Response } from 'express';
 
 @UseGuards(AuthGuard)
 @Controller('tasks')
@@ -14,11 +15,16 @@ export class TaskController {
   constructor(private taskService:TaskService){}
 
   @Post()
-  async createATask (@Body() createTaskDto: CreateTaskDto, @Req() req:AuthUser): Promise<Task>{
+  async createATask (@Body() createTaskDto: CreateTaskDto, @Req() req:AuthUser, @Res() res:Response): Promise<Response>{
     const userId = req.user._id
-    return this.taskService.createTask({
+    const createTask = await this.taskService.createTask({
       ...createTaskDto,
       createdBy: userId
+    })
+    return res.status(201).json({
+      status:'success',
+      message: 'created successfully',
+      task:createTask
     })
   }
 
