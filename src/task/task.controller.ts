@@ -54,9 +54,14 @@ export class TaskController {
   }
 
   @Patch(':id')
-  async updateTask (@Param('id') id:string, @Body() updateTaskDto: UpdateTaskDto, @Req() req:AuthUser){
+  async updateTask (@Param('id') id:string, @Body() updateTaskDto: UpdateTaskDto, @Req() req:AuthUser, @Res() res:Response): Promise<Response>{
     const userId = req.user._id
-    return this.taskService.updateTasks(id, updateTaskDto, userId)
+    const updateTask = await this.taskService.updateTasks(id, updateTaskDto, userId)
+    return res.status(200).json({
+      status:'success',
+      message: 'Updated successfully',
+      task:updateTask
+    })
   }
 
   @Delete(':id')
